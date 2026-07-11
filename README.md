@@ -1,28 +1,43 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fflask3&demo-title=Flask%203%20%2B%20Vercel&demo-description=Use%20Flask%203%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fflask3-python-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994156/random/flask.png)
+# SneakyOwl Flask API
 
-# Flask + Vercel
+This Vercel-hosted Flask service handles BiteTrail operations that require Firebase Admin privileges:
 
-This example shows how to use Flask 3 on Vercel with Serverless Functions using the [Python Runtime](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python).
+- Delete a visit and delete its empty parent place in one transaction.
+- Remove a friend relationship from both sides.
+- Revoke a viewer and prevent that UID from re-adding the list.
+- Delete all BiteTrail data for the signed-in user.
 
-## Demo
+The Flask code is organized by tool. See [api/README.md](./api/README.md) for the package layout and guidance for adding future tools.
 
-https://flask-python-template.vercel.app/
+All protected endpoints expect a Firebase ID token from the SneakyOwl frontend:
 
-## How it Works
+```http
+Authorization: Bearer <firebase-id-token>
+```
 
-This example uses the Web Server Gateway Interface (WSGI) with Flask to enable handling requests on Vercel with Serverless Functions.
+The server verifies this token with Firebase Admin and derives the acting UID from it. Never trust a UID submitted by the browser.
 
-## Running Locally
+## Configuration
+
+Copy `.env.example` for local development. In Vercel, configure the same values as encrypted environment variables:
+
+```text
+FIREBASE_PROJECT_ID
+FIREBASE_SERVICE_ACCOUNT_JSON
+ALLOWED_ORIGINS
+```
+
+`FIREBASE_SERVICE_ACCOUNT_JSON` is a one-line service-account JSON value. It must never be added to the frontend repository or exposed through a `NEXT_PUBLIC_` variable.
+
+`ALLOWED_ORIGINS` is comma-separated; include `http://localhost:3000`, `https://sneakyowl.net`, and any preview domain that should call this API.
+
+After deployment, set `NEXT_PUBLIC_SNEAKYOWL_API_BASE_URL` in the SneakyOwl frontend to the deployed Flask URL.
+
+## Local development
 
 ```bash
-npm i -g vercel
+pip install -r requirements.txt
 vercel dev
 ```
 
-Your Flask application is now available at `http://localhost:3000`.
-
-## One-Click Deploy
-
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fflask3&demo-title=Flask%203%20%2B%20Vercel&demo-description=Use%20Flask%203%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fflask3-python-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994156/random/flask.png)
+The Flask app is served through Vercel's Python runtime configuration in `vercel.json`.

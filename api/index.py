@@ -1,11 +1,5 @@
-from flask import Flask
+"""Vercel's Python entrypoint for the SneakyOwl Flask API."""
 
-app = Flask(__name__)
+from api.app import app
 
-@app.route('/')
-def home():
-    return 'Hello, World!'
-
-@app.route('/about')
-def about():
-    return 'About'
+__all__ = ["app"]
