@@ -108,3 +108,17 @@ def delete_bite_trail_data(uid: str) -> None:
         .document(uid)
         for snapshot in following_snapshots
     )
+
+    # Also clean up legacy one-sided relationships. These can remain under
+    # another user's following subcollection when the deleted account has no
+    # reciprocal document of its own.
+    other_user_following = []
+    for other_user in database.collection("users").stream():
+        if other_user.id == uid:
+            continue
+
+        following_reference = other_user.reference.collection("following").document(uid)
+        if following_reference.get().exists:
+            other_user_following.append(following_reference)
+
+    delete_in_batches(other_user_following)
