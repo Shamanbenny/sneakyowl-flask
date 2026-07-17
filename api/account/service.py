@@ -14,13 +14,9 @@ def delete_account(uid: str) -> None:
     delete_in_batches(
         snapshot.reference for snapshot in user.collection("preferences").stream()
     )
-    delete_in_batches(
-        snapshot.reference
-        for snapshot in database.collection("auditEvents").where("actorUid", "==", uid).stream()
-    )
-    delete_in_batches(
-        snapshot.reference
-        for snapshot in database.collection("auditEvents").where("targetUid", "==", uid).stream()
-    )
     delete_in_batches([user])
-    auth.delete_user(uid)
+    try:
+        auth.delete_user(uid)
+    except auth.UserNotFoundError:
+        # A retry after a partially completed deletion is safe and idempotent.
+        pass
