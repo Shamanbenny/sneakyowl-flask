@@ -6,6 +6,8 @@ This Vercel-hosted Flask service handles BiteTrail operations that require Fireb
 - Remove a friend relationship from both sides.
 - Revoke a viewer and prevent that UID from re-adding the list.
 - Delete all BiteTrail data for the signed-in user.
+- Permanently delete the signed-in user's Firebase Authentication account and
+  Firestore account data after server-side Gmail-address confirmation.
 
 The Flask code is organized by tool. See [api/README.md](./api/README.md) for the package layout and guidance for adding future tools.
 

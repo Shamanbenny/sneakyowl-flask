@@ -6,6 +6,9 @@ The Flask application is organized by shared infrastructure and tool ownership:
 api/
   index.py                 Vercel's stable Python entrypoint
   app.py                   Flask app factory and blueprint registration
+  account/
+    routes.py              Shared account HTTP routes and request checks
+    service.py             Shared account deletion operation
   core/
     auth.py               Firebase ID-token middleware
     config.py             Environment-backed configuration
