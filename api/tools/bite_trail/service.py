@@ -21,9 +21,13 @@ def delete_visit(owner_uid: str, place_id: str, visit_id: str) -> None:
         if not visit_snapshot.exists:
             return
 
-        remaining = list(transaction.get(place.collection("visits").limit(2)))
+        remaining = [
+            snapshot
+            for snapshot in transaction.get(place.collection("visits"))
+            if snapshot.id != visit_id
+        ]
         transaction.delete(visit)
-        if len(remaining) <= 1:
+        if not remaining:
             transaction.delete(place)
         transaction.set(database.collection("auditEvents").document(), {
             "actorUid": owner_uid,
