@@ -90,14 +90,21 @@ def delete_bite_trail_data(uid: str) -> None:
         )
         place_references.append(place.reference)
     delete_in_batches(place_references)
-    delete_in_batches(snapshot.reference for snapshot in user.collection("following").stream())
+    following_snapshots = list(user.collection("following").stream())
+    delete_in_batches(snapshot.reference for snapshot in following_snapshots)
     delete_in_batches(
         snapshot.reference for snapshot in user.collection("blockedViewers").stream()
     )
     # Keep the shared SneakyOwl profile document. Only BiteTrail-owned data is removed.
     delete_in_batches([user.collection("preferences").document("bite-trail")])
 
-    inbound_follows = database.collection_group("following").where(
-        "ownerUid", "==", uid
-    ).stream()
-    delete_in_batches(snapshot.reference for snapshot in inbound_follows)
+    # Following relationships are written bidirectionally. Delete each
+    # reciprocal document directly so account deletion does not depend on a
+    # collection-group index for `following.ownerUid`.
+    delete_in_batches(
+        database.collection("users")
+        .document(snapshot.id)
+        .collection("following")
+        .document(uid)
+        for snapshot in following_snapshots
+    )
