@@ -196,7 +196,7 @@ def delete_visit(actor_uid: str, place_id: str, visit_id: str) -> None:
 
         remaining = [
             snapshot
-            for snapshot in transaction.get(place.collection("visits"))
+            for snapshot in place.collection("visits").stream(transaction=transaction)
             if snapshot.id != visit_id
         ]
         transaction.delete(visit)
@@ -227,7 +227,7 @@ def delete_visits_for_owner(uid: str) -> None:
 
         @firestore.transactional
         def delete_orphaned_place(transaction):
-            snapshots = list(transaction.get(place.collection("visits")))
+            snapshots = list(place.collection("visits").stream(transaction=transaction))
             if not snapshots:
                 transaction.delete(place)
 
