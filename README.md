@@ -2,18 +2,20 @@
 
 This Vercel-hosted Flask service handles BiteTrail operations that require Firebase Admin privileges:
 
-- Delete a visit and delete its empty parent place in one transaction.
-- Remove a friend relationship from both sides.
-- Revoke a viewer and prevent that UID from re-adding the list.
-- Delete all BiteTrail data for the signed-in user.
+- Return the signed-in user's and reciprocal friends' live visits, grouped by global place.
+- Add, remove, or temporarily revoke both sides of a friend relationship.
+- Update a display name across Firebase Auth, the shared profile, visits, and relationship caches.
+- Delete a visit and remove its parent place when it becomes empty.
+- Delete all BiteTrail data for the signed-in user using the indexed visit owner UID.
 - Permanently delete the signed-in user's Firebase Authentication account and
   Firestore account data after server-side Gmail-address confirmation.
 
 Account deletion is exposed at `DELETE /v1/account`. The request body must
 contain the signed-in Gmail address as `{ "email": "<gmail-address>" }`; the
 server compares it case-insensitively with the verified Firebase token email.
-The operation removes current reciprocal and legacy one-sided following
-documents without relying on a collection-group index.
+The operation removes the user's global visits, BiteTrail configuration, and
+reciprocal relationship documents before deleting the shared profile and Auth
+account.
 
 The Flask code is organized by tool. See [api/README.md](./api/README.md) for the package layout and guidance for adding future tools.
 

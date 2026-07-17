@@ -2,8 +2,10 @@ from flask import Blueprint, g, jsonify
 
 from api.core.auth import require_firebase_user
 from api.tools.bite_trail.service import (
+    create_friend,
     delete_bite_trail_data,
     delete_visit,
+    get_visible_places,
     remove_friend,
     revoke_viewer,
 )
@@ -12,15 +14,34 @@ bite_trail_api = Blueprint("bite_trail_api", __name__)
 
 
 @bite_trail_api.route(
-    "/v1/bite-trail/visits/<owner_uid>/<place_id>/<visit_id>",
+    "/v1/bite-trail/visits/<place_id>/<visit_id>",
     methods=["DELETE", "OPTIONS"],
 )
 @require_firebase_user
-def delete_visit_route(owner_uid: str, place_id: str, visit_id: str):
-    if g.firebase_user["uid"] != owner_uid:
-        return jsonify({"error": "You can only delete your own visits."}), 403
+def delete_visit_route(place_id: str, visit_id: str):
+    try:
+        delete_visit(g.firebase_user["uid"], place_id, visit_id)
+    except PermissionError as error:
+        return jsonify({"error": str(error)}), 403
+    return "", 204
 
-    delete_visit(owner_uid, place_id, visit_id)
+
+@bite_trail_api.route("/v1/bite-trail/places", methods=["GET", "OPTIONS"])
+@require_firebase_user
+def visible_places_route():
+    return jsonify(get_visible_places(g.firebase_user["uid"]))
+
+
+@bite_trail_api.route(
+    "/v1/bite-trail/friends/<friend_uid>",
+    methods=["POST", "OPTIONS"],
+)
+@require_firebase_user
+def create_friend_route(friend_uid: str):
+    try:
+        create_friend(g.firebase_user["uid"], friend_uid)
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
     return "", 204
 
 

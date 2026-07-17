@@ -11,5 +11,5 @@ def configure_cors(application: Flask) -> None:
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Vary"] = "Origin"
             response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Idempotency-Key"
-            response.headers["Access-Control-Allow-Methods"] = "DELETE, POST, OPTIONS"
+            response.headers["Access-Control-Allow-Methods"] = "DELETE, GET, POST, OPTIONS"
         return response

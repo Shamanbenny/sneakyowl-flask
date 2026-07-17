@@ -8,12 +8,9 @@ from api.tools.bite_trail.service import delete_bite_trail_data
 def delete_account(uid: str) -> None:
     database = get_firestore_client()
     user = database.collection("users").document(uid)
-    # This removes each visit before its parent place, all own preferences and
-    # relationship documents, and inbound watch-list copies held by other users.
+    # This removes all BiteTrail visits, relationships, and configuration while
+    # retaining shared-account cleanup below.
     delete_bite_trail_data(uid)
-    delete_in_batches(
-        snapshot.reference for snapshot in user.collection("preferences").stream()
-    )
     delete_in_batches([user])
     try:
         auth.delete_user(uid)

@@ -31,5 +31,11 @@ api/tools/chess/service.py
 Register that tool's Blueprint in `api/app.py`. Keep Firebase setup, token verification, CORS, and generic Firestore helpers in `api/core/`; keep tool-specific validation and data operations in the corresponding tool package.
 
 `api/index.py` remains the Vercel entrypoint and exports the Flask `app` object.
-The protected public routes include the existing BiteTrail operations and
-`DELETE /v1/account` for Gmail-confirmed account deletion.
+
+Protected public routes include:
+
+- `GET /v1/bite-trail/places` for authorised live places and visits.
+- `POST` and `DELETE /v1/bite-trail/friends/{friendUid}` for reciprocal relationships.
+- `DELETE /v1/bite-trail/visits/{placeId}/{visitId}` for an owned visit.
+- `POST /v1/account/profile` for display-name propagation.
+- `DELETE /v1/bite-trail/data` and `DELETE /v1/account` for data and account deletion.
