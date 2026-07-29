@@ -39,3 +39,10 @@ Protected public routes include:
 - `DELETE /v1/bite-trail/visits/{placeId}/{visitId}` for an owned visit.
 - `POST /v1/account/profile` for display-name propagation.
 - `DELETE /v1/bite-trail/data` and `DELETE /v1/account` for data and account deletion.
+
+Protected mutation routes validate JSON bodies and route identifiers before
+touching Firestore. Display names are Unicode-normalized, bounded to 80
+characters, and reject control characters. API validation rejects malformed or
+oversized document IDs; frontend-created BiteTrail places and visits are instead
+validated by Firestore Security Rules because they are written directly from the
+browser. Stored text is rendered by React as text, not HTML.

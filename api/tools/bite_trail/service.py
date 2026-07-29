@@ -4,6 +4,7 @@ from firebase_admin import auth, firestore
 
 from api.core.firebase import get_firestore_client
 from api.core.firestore import delete_in_batches
+from api.core.validation import display_name as normalize_display_name
 
 SNEAKY_OWL_UID = "AXOel5MZ8Yelb5a1bHgFcieT80y2"
 
@@ -235,6 +236,7 @@ def delete_visits_for_owner(uid: str) -> None:
 
 
 def update_display_name(uid: str, display_name: str) -> None:
+    display_name = normalize_display_name(display_name)
     if display_name == "SneakyOwl" and uid != SNEAKY_OWL_UID:
         display_name = "NotSneakyOwl"
 
