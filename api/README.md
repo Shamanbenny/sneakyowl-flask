@@ -34,7 +34,10 @@ Register that tool's Blueprint in `api/app.py`. Keep Firebase setup, token verif
 
 Protected public routes include:
 
-- `GET /v1/bite-trail/places` for authorised live places and visits.
+- `GET /v1/bite-trail/places` for authorised live places and visits. The
+  relationship list controls access to another user's live visits, including
+  the explicit SneakyOwl case; the frontend applies the viewer's stored
+  `showSneakyOwl` preference when merging live and static data.
 - `POST` and `DELETE /v1/bite-trail/friends/{friendUid}` for reciprocal relationships.
 - `DELETE /v1/bite-trail/visits/{placeId}/{visitId}` for an owned visit.
 - `POST /v1/account/profile` for display-name propagation.

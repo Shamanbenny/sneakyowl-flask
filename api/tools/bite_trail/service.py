@@ -135,6 +135,8 @@ def get_visible_places(viewer_uid: str) -> list[dict]:
         for snapshot in following_snapshots(viewer_uid)
         if isinstance(snapshot.to_dict().get("friendUid"), str)
     ]
+    # SneakyOwl is deliberately fetched live only through this relationship
+    # list. If it is absent, the frontend uses the static snapshot instead.
     owner_uids = list(dict.fromkeys([viewer_uid, *friend_uids]))
     visits_by_place = defaultdict(list)
 

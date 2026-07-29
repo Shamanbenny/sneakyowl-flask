@@ -2,7 +2,7 @@
 
 This Vercel-hosted Flask service handles BiteTrail operations that require Firebase Admin privileges:
 
-- Return the signed-in user's and reciprocal friends' live visits, grouped by global place.
+- Return the signed-in user's and reciprocal friends' live visits, grouped by global place. SneakyOwl live visits are included only when the reciprocal relationship exists; otherwise the frontend uses its static snapshot fallback.
 - Add, remove, or temporarily revoke both sides of a friend relationship.
 - Update a display name across Firebase Auth, the shared profile, visits, and relationship caches.
 - Delete a visit and remove its parent place when it becomes empty.
